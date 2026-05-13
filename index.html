@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worcester — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --bg2: #efecea;
+    --ink: #1a1814;
+    --ink2: #5a5650;
+    --ink3: #9a9690;
+    --accent: #c8502a;
+    --accent-light: #fdf1ed;
+    --border: #e0ddd8;
+    --card-bg: #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 20px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(247,245,242,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    animation: fadeDown 0.6s ease both;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.3px;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 400;
+    color: var(--ink2); text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 120px 40px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: var(--ink);
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-desc {
+    margin-top: 28px;
+    font-size: 1.1rem;
+    color: var(--ink2);
+    max-width: 500px;
+    line-height: 1.7;
+    animation: fadeUp 0.7s 0.35s ease both;
+  }
+  .hero-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 24px;
+    animation: fadeUp 0.7s 0.45s ease both;
+  }
+  .tag {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.78rem; font-weight: 400;
+    color: var(--ink3);
+    background: var(--card-bg);
+  }
+  .hero-scroll {
+    margin-top: 60px;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--ink3); font-size: 0.8rem;
+    animation: fadeUp 0.7s 0.55s ease both;
+  }
+  .scroll-line {
+    width: 40px; height: 1px; background: var(--border);
+    animation: grow 1.2s 1s ease both;
+    transform-origin: left;
+  }
+
+  /* ── Section ── */
+  section {
+    max-width: 900px; margin: 0 auto;
+    padding: 80px 40px;
+  }
+  .section-label {
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--ink3); margin-bottom: 40px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── Project cards ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column; gap: 16px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative; overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--accent-light);
+    opacity: 0; transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    border-color: var(--accent);
+  }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--bg2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .project-card:hover .project-icon { background: var(--accent-light); }
+
+  .project-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem; letter-spacing: -0.3px;
+    color: var(--ink);
+  }
+  .project-desc {
+    font-size: 0.85rem; color: var(--ink2);
+    line-height: 1.6; flex: 1;
+  }
+  .project-stack {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .stack-tag {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.72rem; font-weight: 500;
+    background: var(--bg2);
+    color: var(--ink3);
+  }
+  .project-arrow {
+    position: absolute; top: 26px; right: 26px;
+    font-size: 1rem; color: var(--border);
+    transition: color 0.2s, transform 0.2s;
+  }
+  .project-card:hover .project-arrow { color: var(--accent); transform: translate(2px,-2px); }
+
+  /* ── About ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px; align-items: start;
+  }
+  .about-text h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; letter-spacing: -0.5px;
+    line-height: 1.2; margin-bottom: 16px;
+  }
+  .about-text p { color: var(--ink2); font-size: 0.95rem; line-height: 1.8; margin-bottom: 12px; }
+  .about-stats { display: flex; flex-direction: column; gap: 16px; }
+  .stat-item {
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: var(--accent);
+  }
+  .stat-label { font-size: 0.82rem; color: var(--ink3); margin-top: 4px; }
+
+  /* ── Contact ── */
+  .contact-box {
+    background: var(--ink);
+    border-radius: 20px;
+    padding: 60px 48px;
+    text-align: center;
+  }
+  .contact-box h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem; color: #fff;
+    letter-spacing: -0.5px; margin-bottom: 12px;
+  }
+  .contact-box p { color: #9a9690; font-size: 0.95rem; margin-bottom: 32px; }
+  .contact-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent);
+    color: #fff; text-decoration: none;
+    padding: 14px 32px; border-radius: 100px;
+    font-size: 0.9rem; font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .contact-btn:hover { background: #b84020; transform: translateY(-2px); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center; padding: 32px 40px;
+    font-size: 0.78rem; color: var(--ink3);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    section { padding: 60px 20px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .contact-box { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">Worcester</a>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-eyebrow">Portfolio · 2025</div>
+  <h1>Building things<br>that <em>actually</em><br>work.</h1>
+  <p class="hero-desc">
+    นักพัฒนาซอฟต์แวร์และนักศึกษาปริญญาโท สนใจ Machine Learning, 
+    Medical Imaging และการสร้างเครื่องมือที่ใช้งานได้จริง
+  </p>
+  <div class="hero-tags">
+    <span class="tag">Python</span>
+    <span class="tag">Machine Learning</span>
+    <span class="tag">Next.js</span>
+    <span class="tag">Medical Imaging</span>
+    <span class="tag">Thailand 🇹🇭</span>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    scroll to explore
+  </div>
+</div>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="section-label">Projects</div>
+  <div class="projects-grid">
+
+    <a href="./split/" class="project-card reveal">
+      <span class="project-arrow">↗</span>
+      <div class="project-icon">💸</div>
+      <div>
+        <div class="project-name">หารเงินเพื่อน</div>
+        <p class="project-desc">แอปหารค่าใช้จ่ายแบบรายการ กำหนดสัดส่วนแต่ละคนได้อิสระ ไม่ต้องหารเท่ากันทุกคน</p>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">HTML</span>
+        <span class="stack-tag">CSS</span>
+        <span class="stack-tag">JavaScript</span>
+      </div>
+    </a>
+
+    <a href="./classtrack/" class="project-card reveal" style="transition-delay:0.1s">
+      <span class="project-arrow">↗</span>
+      <div class="project-icon">📚</div>
+      <div>
+        <div class="project-name">ClassTrack</div>
+        <p class="project-desc">ระบบจัดการห้องเรียนสำหรับโรงเรียนไทย เชื่อมต่อ LINE Chatbot + LIFF เต็มรูปแบบ</p>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Next.js</span>
+        <span class="stack-tag">Prisma</span>
+        <span class="stack-tag">LINE API</span>
+      </div>
+    </a>
+
+    <a href="./restaurant/" class="project-card reveal" style="transition-delay:0.2s">
+      <span class="project-arrow">↗</span>
+      <div class="project-icon">🍲</div>
+      <div>
+        <div class="project-name">Buffet Order System</div>
+        <p class="project-desc">ระบบสั่งอาหารบุฟเฟ่ต์สไตล์ Suki Teenoi พร้อม Kitchen Display และพิมพ์ใบเสร็จอัตโนมัติ</p>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">React</span>
+        <span class="stack-tag">Tailwind</span>
+        <span class="stack-tag">Thermal Print</span>
+      </div>
+    </a>
+
+    <a href="#" class="project-card reveal" style="transition-delay:0.3s; opacity:0.6; cursor:default; pointer-events:none;">
+      <div class="project-icon">🏥</div>
+      <div>
+        <div class="project-name">Medical Display QC</div>
+        <p class="project-desc">ระบบตรวจสอบคุณภาพจอแพทย์อัตโนมัติด้วย ML + smartphone ตามมาตรฐาน AAPM TG-270</p>
+      </div>
+      <div class="project-stack">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">SVM</span>
+        <span class="stack-tag">Computer Vision</span>
+      </div>
+      <div style="font-size:0.72rem;color:var(--ink3);margin-top:4px;">🔬 In progress — Thesis 2025</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <h2>Hi, I'm<br>Worcester.</h2>
+      <p>นักศึกษาปริญญาโทที่ชอบสร้างสิ่งที่ใช้งานได้จริง ตั้งแต่ซอฟต์แวร์ทางการแพทย์ไปจนถึงแอปในชีวิตประจำวัน</p>
+      <p>งานวิจัยหลักเกี่ยวกับการประเมินคุณภาพจอแสดงผลทางการแพทย์แบบอัตโนมัติโดยใช้ Machine Learning และภาพถ่ายจากสมาร์ทโฟน</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-num">4+</div>
+        <div class="stat-label">Projects shipped</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">M.S.</div>
+        <div class="stat-label">Graduate student · Thailand</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">TG-270</div>
+        <div class="stat-label">AAPM Medical Imaging Research</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="contact-box reveal">
+    <h2>Let's work together.</h2>
+    <p>มีโปรเจกต์น่าสนใจ? ติดต่อมาได้เลย</p>
+    <a href="mailto:hello@worcester.dev" class="contact-btn">
+      ✉️ &nbsp;Say hello
+    </a>
+  </div>
+</section>
+
+<footer>
+  © 2025 Worcester · Built with care
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>

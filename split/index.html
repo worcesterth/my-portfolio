@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หารเงิน — Worcester</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f0e0d;--surface:#1a1917;--card:#222120;--border:#2e2c2a;--accent:#f5c842;--accent2:#ff7c4a;--green:#5dde8a;--text:#f0ede8;--muted:#7a7670;--danger:#ff4a4a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;min-height:100vh;padding:24px 16px 60px}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:0.85rem;margin-bottom:24px;transition:color 0.2s}
+  .back-btn:hover{color:var(--accent)}
+  header{text-align:center;margin-bottom:32px}
+  header h1{font-size:2.2rem;font-weight:700;letter-spacing:-1px;color:var(--accent)}
+  header p{color:var(--muted);font-size:0.9rem;margin-top:4px}
+  .container{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .card-title{font-size:.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .friends-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .friend-chip{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:.9rem;color:var(--text);font-family:'Sarabun',sans-serif}
+  .friend-chip .avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+  .friend-chip .remove-btn{cursor:pointer;background:none;border:none;color:var(--danger);opacity:.6;padding:0 0 0 2px;transition:opacity .2s;font-size:1rem}
+  .friend-chip .remove-btn:hover{opacity:1}
+  .add-friend-form{display:flex;gap:8px;margin-top:14px}
+  .add-friend-form input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s}
+  .add-friend-form input:focus{border-color:var(--accent)}
+  .add-friend-form input::placeholder{color:var(--muted)}
+  .btn{padding:10px 18px;border-radius:10px;border:none;font-family:'Sarabun',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+  .btn-accent{background:var(--accent);color:#000}
+  .btn-accent:hover{background:#ffd84a;transform:translateY(-1px)}
+  .item-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;position:relative}
+  .item-card-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px}
+  .item-card-header input[type="text"]{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s}
+  .item-card-header input[type="text"]:focus{border-color:var(--accent)}
+  .item-card-header input[type="text"]::placeholder{color:var(--muted)}
+  .price-input-wrap{position:relative;flex-shrink:0;width:140px}
+  .price-input-wrap span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.85rem}
+  .price-input-wrap input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 10px 8px 30px;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;outline:none;transition:border-color .2s}
+  .price-input-wrap input:focus{border-color:var(--accent)}
+  .item-delete-btn{background:none;border:none;color:var(--danger);opacity:.5;cursor:pointer;font-size:1.1rem;padding:6px;transition:opacity .2s;flex-shrink:0}
+  .item-delete-btn:hover{opacity:1}
+  .split-mode-row{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+  .split-mode-row label{color:var(--muted);font-size:.8rem;margin-right:4px}
+  .mode-btn{padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Sarabun',sans-serif}
+  .mode-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+  .participants-grid{display:flex;flex-wrap:wrap;gap:8px}
+  .participant-tile{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:110px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,background .2s;cursor:pointer;position:relative}
+  .participant-tile.selected{border-color:var(--accent);background:rgba(245,200,66,.07)}
+  .participant-tile .p-name{display:flex;align-items:center;gap:6px;font-size:.88rem;font-weight:600;user-select:none}
+  .participant-tile .p-avatar{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0}
+  .participant-tile .p-amount-wrap{display:flex;align-items:center;gap:4px}
+  .participant-tile .p-amount-wrap input{width:80px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;outline:none;text-align:right}
+  .participant-tile .p-amount-wrap input:focus{border-color:var(--accent)}
+  .participant-tile .p-amount-label{color:var(--muted);font-size:.75rem;font-family:'IBM Plex Mono',monospace}
+  .check-icon{position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.6rem;opacity:0;transition:opacity .2s}
+  .participant-tile.selected .check-icon{opacity:1}
+  .add-item-btn{width:100%;padding:12px;background:transparent;border:1px dashed var(--border);border-radius:12px;color:var(--muted);font-family:'Sarabun',sans-serif;font-size:.9rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .add-item-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .summary-person{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .summary-person:hover{border-color:var(--accent)}
+  .summary-person-header{display:flex;align-items:center;gap:8px}
+  .summary-person-name{font-weight:600;font-size:.95rem}
+  .summary-total{font-family:'IBM Plex Mono',monospace;font-size:1.4rem;font-weight:600;color:var(--green)}
+  .summary-items{font-size:.78rem;color:var(--muted)}
+  .summary-item-line{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--border)}
+  .summary-item-line:last-child{border-bottom:none}
+  .summary-item-line .si-amt{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:.8rem}
+  .grand-total-bar{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-top:4px}
+  .grand-total-bar .gt-label{color:var(--muted);font-size:.9rem}
+  .grand-total-bar .gt-val{font-family:'IBM Plex Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--accent)}
+  .balance-warning{display:none;background:rgba(255,76,76,.1);border:1px solid rgba(255,76,76,.3);border-radius:8px;padding:8px 14px;font-size:.82rem;color:var(--danger);margin-top:8px}
+  @media(max-width:600px){.price-input-wrap{width:120px}.summary-grid{grid-template-columns:1fr 1fr}.participant-tile{min-width:90px}}
+</style>
+</head>
+<body>
+<div style="max-width:860px;margin:0 auto;">
+  <a href="../" class="back-btn">← กลับหน้าหลัก</a>
+</div>
+<header>
+  <h1>💸 หารเงินเพื่อน</h1>
+  <p>เพิ่มรายการ กำหนดสัดส่วนแต่ละคน คำนวณอัตโนมัติ</p>
+</header>
+<div class="container">
+  <div class="card">
+    <div class="card-title">👥 รายชื่อเพื่อน</div>
+    <div class="friends-row" id="friends-list"></div>
+    <div class="add-friend-form">
+      <input id="friend-input" type="text" placeholder="ชื่อเพื่อน..." maxlength="20" autocomplete="off">
+      <button class="btn btn-accent" onclick="addFriend()">+ เพิ่ม</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🧾 รายการค่าใช้จ่าย</div>
+    <div id="items-container"></div>
+    <button class="add-item-btn" onclick="addItem()">＋ เพิ่มรายการ</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 สรุปยอดแต่ละคน</div>
+    <div class="grand-total-bar">
+      <span class="gt-label">ยอดรวมทั้งหมด</span>
+      <span class="gt-val" id="grand-total">฿0.00</span>
+    </div>
+    <div class="balance-warning" id="balance-warning">⚠️ ยอดหารรวมกันไม่เท่ากับราคา – ตรวจสอบอีกครั้ง</div>
+    <div style="margin-top:16px;" class="summary-grid" id="summary-grid"></div>
+  </div>
+</div>
+<script>
+const COLORS=['#f5c842','#ff7c4a','#5dde8a','#4ac8ff','#c57aff','#ff4aad','#a0ff4a','#ffb84a'];
+let friends=[],items=[],nextFriendId=1,nextItemId=1;
+function addFriend(){const inp=document.getElementById('friend-input');const name=inp.value.trim();if(!name)return;if(friends.length>=8){alert('เพิ่มได้สูงสุด 8 คน');return;}friends.push({id:nextFriendId++,name,color:COLORS[(friends.length)%COLORS.length]});inp.value='';renderFriends();renderItems();renderSummary();}
+function removeFriend(id){friends=friends.filter(f=>f.id!==id);items.forEach(item=>{item.participants=item.participants.filter(p=>p.friendId!==id);});renderFriends();renderItems();renderSummary();}
+function renderFriends(){const el=document.getElementById('friends-list');if(friends.length===0){el.innerHTML='<span style="color:var(--muted);font-size:0.85rem;">ยังไม่มีเพื่อน – เพิ่มด้านล่าง</span>';return;}el.innerHTML=friends.map(f=>`<div class="friend-chip"><div class="avatar" style="background:${f.color}20;color:${f.color}">${f.name[0].toUpperCase()}</div>${f.name}<button class="remove-btn" onclick="removeFriend(${f.id})">✕</button></div>`).join('');}
+document.getElementById('friend-input').addEventListener('keydown',e=>{if(e.key==='Enter')addFriend();});
+function addItem(){items.push({id:nextItemId++,name:'',price:'',mode:'equal',participants:[]});renderItems();}
+function removeItem(id){items=items.filter(i=>i.id!==id);renderItems();renderSummary();}
+function setItemName(id,val){const item=items.find(i=>i.id===id);if(item){item.name=val;renderSummary();}}
+function setItemPrice(id,val){const item=items.find(i=>i.id===id);if(!item)return;item.price=val;if(item.mode==='equal')redistributeEqual(item);renderItemParticipants(id);renderSummary();}
+function setMode(id,mode){const item=items.find(i=>i.id===id);if(!item)return;item.mode=mode;if(mode==='equal')redistributeEqual(item);renderItemParticipants(id);renderSummary();}
+function redistributeEqual(item){const selected=item.participants.filter(p=>p.selected!==false);const count=selected.length;if(count===0||!item.price){item.participants.forEach(p=>p.amount='');return;}const share=(parseFloat(item.price)/count).toFixed(2);item.participants.forEach(p=>{p.amount=p.selected!==false?share:'';});}
+function toggleParticipant(itemId,friendId){const item=items.find(i=>i.id===itemId);if(!item)return;const existing=item.participants.find(p=>p.friendId===friendId);if(existing){existing.selected=!existing.selected;if(!existing.selected)existing.amount='';}else{item.participants.push({friendId,selected:true,amount:''});}if(item.mode==='equal')redistributeEqual(item);renderItemParticipants(itemId);renderSummary();}
+function setParticipantAmount(itemId,friendId,val){const item=items.find(i=>i.id===itemId);if(!item)return;const p=item.participants.find(p=>p.friendId===friendId);if(p){p.amount=val;renderSummary();}}
+function isParticipantSelected(item,friendId){const p=item.participants.find(p=>p.friendId===friendId);return p?p.selected!==false:false;}
+function getParticipantAmount(item,friendId){const p=item.participants.find(p=>p.friendId===friendId);return p&&p.selected!==false?(p.amount||''):'';}
+function renderItems(){const container=document.getElementById('items-container');container.innerHTML=items.map(item=>`<div class="item-card" id="item-${item.id}"><div class="item-card-header"><input type="text" placeholder="ชื่อรายการ..." value="${item.name}" oninput="setItemName(${item.id},this.value)"><div class="price-input-wrap"><span>฿</span><input type="number" min="0" step="0.01" placeholder="0.00" value="${item.price}" oninput="setItemPrice(${item.id},this.value)"></div><button class="item-delete-btn" onclick="removeItem(${item.id})">🗑</button></div><div class="split-mode-row"><label>แบ่งแบบ:</label><button class="mode-btn ${item.mode==='equal'?'active':''}" onclick="setMode(${item.id},'equal')">เฉลี่ยเท่ากัน</button><button class="mode-btn ${item.mode==='custom'?'active':''}" onclick="setMode(${item.id},'custom')">กำหนดเอง</button></div><div class="participants-grid" id="participants-${item.id}">${friends.length===0?'<span style="color:var(--muted);font-size:0.82rem;">เพิ่มเพื่อนก่อน</span>':''}</div></div>`).join('');items.forEach(item=>renderItemParticipants(item.id));}
+function renderItemParticipants(itemId){const item=items.find(i=>i.id===itemId);if(!item)return;const grid=document.getElementById(`participants-${itemId}`);if(!grid)return;if(friends.length===0){grid.innerHTML='<span style="color:var(--muted);font-size:0.82rem;">เพิ่มเพื่อนก่อน</span>';return;}grid.innerHTML=friends.map(f=>{const selected=isParticipantSelected(item,f.id);const amt=getParticipantAmount(item,f.id);return`<div class="participant-tile ${selected?'selected':''}" onclick="toggleParticipant(${item.id},${f.id})"><div class="check-icon">✓</div><div class="p-name"><div class="p-avatar" style="background:${f.color}25;color:${f.color}">${f.name[0].toUpperCase()}</div>${f.name}</div>${selected?`<div class="p-amount-wrap" onclick="event.stopPropagation()"><input type="number" min="0" step="0.01" placeholder="0.00" value="${amt}" ${item.mode==='equal'?'readonly style="opacity:0.7;cursor:not-allowed"':''} oninput="setParticipantAmount(${item.id},${f.id},this.value)"><span class="p-amount-label">฿</span></div>`:`<div style="color:var(--muted);font-size:0.75rem;">คลิกเพื่อเลือก</div>`}</div>`;}).join('');}
+function renderSummary(){const grandTotalEl=document.getElementById('grand-total');const grid=document.getElementById('summary-grid');const warning=document.getElementById('balance-warning');let grandTotal=0;items.forEach(item=>{const p=parseFloat(item.price);if(!isNaN(p))grandTotal+=p;});grandTotalEl.textContent=`฿${grandTotal.toFixed(2)}`;const totals={};friends.forEach(f=>{totals[f.id]={total:0,lines:[]};});let hasWarning=false;items.forEach(item=>{const price=parseFloat(item.price)||0;const selected=item.participants.filter(p=>p.selected!==false);let sumAmounts=0;selected.forEach(p=>{const amt=parseFloat(p.amount)||0;sumAmounts+=amt;if(totals[p.friendId]){totals[p.friendId].total+=amt;totals[p.friendId].lines.push({name:item.name||'ไม่มีชื่อ',amt});}});if(selected.length>0&&price>0&&Math.abs(sumAmounts-price)>0.02)hasWarning=true;});warning.style.display=hasWarning?'block':'none';if(friends.length===0){grid.innerHTML='<span style="color:var(--muted);font-size:0.85rem;">เพิ่มเพื่อนเพื่อดูสรุป</span>';return;}grid.innerHTML=friends.map(f=>{const data=totals[f.id]||{total:0,lines:[]};const lines=data.lines.filter(l=>l.amt>0);return`<div class="summary-person"><div class="summary-person-header"><div class="p-avatar" style="background:${f.color}25;color:${f.color};width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;">${f.name[0].toUpperCase()}</div><span class="summary-person-name">${f.name}</span></div><div class="summary-total">฿${data.total.toFixed(2)}</div><div class="summary-items">${lines.length===0?'<span style="color:var(--muted)">ไม่มีรายการ</span>':lines.map(l=>`<div class="summary-item-line"><span>${l.name}</span><span class="si-amt">฿${l.amt.toFixed(2)}</span></div>`).join('')}</div></div>`;}).join('');}
+renderFriends();renderItems();renderSummary();
+</script>
+</body>
+</html>
