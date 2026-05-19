@@ -56,8 +56,9 @@ document.querySelectorAll('.activity-carousel').forEach(carousel => {
   prevBtn.addEventListener('click', () => goTo(current - 1));
   nextBtn.addEventListener('click', () => goTo(current + 1));
 
-  // รูปโหลดไม่ได้ → แสดง placeholder
+  // data-pos → object-position (เช่น data-pos="top", "left", "right", "bottom")
   imgs.forEach(img => {
+    if (img.dataset.pos) img.style.objectPosition = img.dataset.pos;
     img.addEventListener('error', () => img.classList.add('broken'));
   });
 });

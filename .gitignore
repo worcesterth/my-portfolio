@@ -2,3 +2,7 @@
 *.HEIC
 *.heic
 images/me.heic
+
+# MOV originals ที่ compress แล้ว (ใหญ่เกิน Cloudflare 25MB limit)
+mmu/stories/Day2/8.MOV
+mmu/stories/Day3/5.MOV

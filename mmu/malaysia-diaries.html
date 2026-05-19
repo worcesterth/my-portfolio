@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Malaysia diaries — @malaysia.diaries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAFA;
+    --bg-card: #FFFFFF;
+    --ink: #262626;
+    --ink-soft: #737373;
+    --ink-mute: #A8A8A8;
+    --line: #DBDBDB;
+    --line-soft: #EFEFEF;
+    --blue: #0095F6;
+    --red: #ED4956;
+    --story-grad: linear-gradient(45deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 60px;
+  }
+
+  /* NAV */
+  nav { position: sticky; top: 0; background: var(--bg-card); border-bottom: 1px solid var(--line); z-index: 100; padding: 12px 0; }
+  .nav-inner { max-width: 935px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .logo { font-weight: 600; font-size: 24px; font-style: italic; letter-spacing: -0.02em; background: var(--story-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .search { flex: 1; max-width: 268px; height: 36px; background: var(--line-soft); border-radius: 8px; display: flex; align-items: center; padding: 0 14px; color: var(--ink-mute); font-size: 14px; }
+  .search::before { content: '🔍'; margin-right: 8px; opacity: 0.5; font-size: 12px; }
+  .nav-icons { display: flex; gap: 22px; font-size: 22px; color: var(--ink); }
+  @media (max-width: 600px) { .search { display: none; } }
+
+  /* PROFILE */
+  .profile { max-width: 935px; margin: 30px auto 0; padding: 0 20px 32px; display: grid; grid-template-columns: 280px 1fr; gap: 80px; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 44px; }
+  @media (max-width: 736px) { .profile { grid-template-columns: 80px 1fr; gap: 28px; padding-bottom: 24px; } }
+  .profile-pic-wrap { display: flex; justify-content: center; }
+  .profile-pic { width: 150px; height: 150px; border-radius: 50%; background: var(--story-grad); display: flex; align-items: center; justify-content: center; color: white; font-size: 64px; font-weight: 600; border: 4px solid var(--bg-card); box-shadow: 0 0 0 1px var(--line); }
+  @media (max-width: 736px) { .profile-pic { width: 80px; height: 80px; font-size: 32px; border-width: 2px; } }
+  .profile-info { padding-top: 8px; }
+  .profile-top { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+  .username { font-size: 20px; font-weight: 300; }
+  .follow-btn { background: var(--blue); color: white; border: none; padding: 7px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .message-btn { background: var(--line-soft); color: var(--ink); border: none; padding: 7px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .stats { display: flex; gap: 40px; margin-bottom: 20px; font-size: 16px; }
+  .stats span b { font-weight: 600; }
+  @media (max-width: 736px) { .stats { gap: 20px; font-size: 14px; } }
+  .bio { font-size: 14px; line-height: 1.5; }
+  .bio-name { font-weight: 600; margin-bottom: 2px; }
+  .bio-tag { color: var(--ink-soft); font-size: 13px; margin-bottom: 6px; }
+  .bio-line { margin-bottom: 2px; }
+  .bio a { color: #00376B; text-decoration: none; font-weight: 500; }
+
+  /* STORIES */
+  .stories-bar { max-width: 935px; margin: 0 auto; padding: 24px 20px; display: flex; gap: 18px; overflow-x: auto; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+  .stories-bar::-webkit-scrollbar { display: none; }
+  .story-thumb { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; width: 74px; }
+  .story-ring { width: 66px; height: 66px; border-radius: 50%; background: var(--story-grad); padding: 3px; transition: transform 0.2s; }
+  .story-thumb:hover .story-ring { transform: scale(1.05); }
+  .story-inner { width: 100%; height: 100%; border-radius: 50%; border: 2.5px solid var(--bg-card); overflow: hidden; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 22px; }
+  .story-label { font-size: 12px; text-align: center; color: var(--ink); max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .s-best { background: linear-gradient(135deg, #fbbf24, #d97706); }
+  .s-food { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+  .s-temple { background: linear-gradient(135deg, #f59e0b, #92400e); }
+  .s-regret { background: linear-gradient(135deg, #6b7280, #1f2937); }
+  .s-friends { background: linear-gradient(135deg, #ec4899, #be185d); }
+  .s-growth { background: linear-gradient(135deg, #10b981, #047857); }
+  .day-1  { background: linear-gradient(160deg, #f97316, #dc2626); }
+  .day-2  { background: linear-gradient(160deg, #fbbf24, #d97706); }
+  .day-3  { background: linear-gradient(160deg, #4ade80, #16a34a); }
+  .day-4  { background: linear-gradient(160deg, #22d3ee, #0891b2); }
+  .day-5  { background: linear-gradient(160deg, #818cf8, #4338ca); }
+  .day-6  { background: linear-gradient(160deg, #f59e0b, #dd2a7b 50%, #8134af); }
+  .day-7  { background: linear-gradient(160deg, #fb7185, #e11d48); }
+  .day-8  { background: linear-gradient(160deg, #fb923c, #c2410c); }
+  .day-9  { background: linear-gradient(160deg, #34d399, #0d9488); }
+  .day-10 { background: linear-gradient(160deg, #a78bfa, #7c3aed); }
+  .day-11 { background: linear-gradient(160deg, #fbbf24, #f59e0b 50%, #92400e); }
+
+  /* TABS */
+  .tabs { max-width: 935px; margin: 0 auto; display: flex; justify-content: center; gap: 60px; border-bottom: 1px solid var(--line); padding: 0 20px; }
+  .tab { padding: 16px 0; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--ink-mute); border-top: 1px solid transparent; margin-top: -1px; text-transform: uppercase; cursor: pointer; }
+  .tab.active { color: var(--ink); border-top-color: var(--ink); }
+  @media (max-width: 600px) { .tabs { gap: 30px; } }
+
+  /* FEED */
+  .feed { max-width: 470px; margin: 32px auto 0; padding: 0 0 60px; }
+  @media (max-width: 510px) { .feed { padding: 0 8px 60px; } }
+  .post { background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 24px; overflow: hidden; }
+  .post-head { display: flex; align-items: center; padding: 12px 14px; gap: 10px; }
+  .post-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--story-grad); padding: 2px; flex-shrink: 0; }
+  .post-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; background-clip: padding-box; }
+  .post-meta { flex: 1; line-height: 1.25; }
+  .post-username { font-weight: 600; font-size: 14px; }
+  .post-location { font-size: 12px; color: var(--ink); }
+  .post-more { color: var(--ink); font-size: 18px; cursor: pointer; padding: 6px; }
+  .post-photo { width: 100%; aspect-ratio: 1 / 1; background: #f0f0f0; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .post-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-placeholder { color: rgba(255, 255, 255, 0.95); text-align: center; padding: 30px; }
+  .photo-placeholder .icon { font-size: 56px; margin-bottom: 12px; }
+  .photo-placeholder .text { font-size: 13px; font-weight: 500; opacity: 0.95; }
+  .ph-batu { background: linear-gradient(160deg, #e8a663 0%, #c2410c 60%, #7c2d12 100%); }
+  .ph-batu-top { background: linear-gradient(160deg, #fbbf24 0%, #b45309 50%, #451a03 100%); }
+  .ph-batu-monkey { background: linear-gradient(160deg, #a3a3a3 0%, #525252 50%, #1c1917 100%); }
+  .ph-alor { background: linear-gradient(160deg, #fbbf24 0%, #d97706 50%, #78350f 100%); }
+  .ph-alor-food { background: linear-gradient(160deg, #fb923c 0%, #c2410c 50%, #7c2d12 100%); }
+  .ph-alor-night { background: linear-gradient(160deg, #818cf8 0%, #4338ca 50%, #1e1b4b 100%); }
+  .ph-klcc { background: linear-gradient(160deg, #6b7280 0%, #1f2937 50%, #111827 100%); }
+  .ph-durian { background: linear-gradient(160deg, #84cc16 0%, #4d7c0f 50%, #365314 100%); }
+  /* rating banner inside carousel: move to left so it doesn't clash with count pill */
+  .carousel-rating { right: auto; left: 14px; }
+  /* CAROUSEL — multi-photo posts */
+  .carousel { position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #f0f0f0; }
+  .carousel-track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; }
+  .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* count pill (e.g. "1/3") top-right */
+  .carousel-count { position: absolute; top: 14px; right: 14px; background: rgba(38, 38, 38, 0.65); color: white; padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; backdrop-filter: blur(4px); z-index: 5; }
+  /* arrow buttons (visible on hover, desktop) */
+  .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.85); color: var(--ink); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; z-index: 5; opacity: 0; transition: opacity 0.2s; }
+  .carousel:hover .carousel-arrow { opacity: 1; }
+  .carousel-arrow:hover { background: white; }
+  .carousel-arrow.prev { left: 12px; }
+  .carousel-arrow.next { right: 12px; }
+  .carousel-arrow.hidden { opacity: 0 !important; pointer-events: none; }
+  /* dots under photo */
+  .carousel-dots { display: flex; justify-content: center; gap: 4px; padding: 8px 0 4px; }
+  .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: #C7C7C7; transition: background 0.2s; }
+  .carousel-dot.active { background: var(--blue); }
+
+  .rating-banner { position: absolute; top: 14px; right: 14px; background: rgba(255, 255, 255, 0.95); color: var(--ink); padding: 6px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 6px; }
+  .rating-banner.regret { background: rgba(38, 38, 38, 0.85); color: white; }
+  .rating-banner .stars { color: #FBBF24; letter-spacing: 1px; }
+  .post-actions { display: flex; align-items: center; padding: 8px 12px 4px; font-size: 24px; gap: 12px; color: var(--ink); }
+  .post-actions .left { display: flex; gap: 12px; flex: 1; }
+  .post-actions span { cursor: pointer; }
+  .post-likes { padding: 0 14px 6px; font-size: 14px; font-weight: 600; }
+  .post-body { padding: 0 14px 4px; font-size: 14px; line-height: 1.5; }
+  .caption { margin-bottom: 6px; }
+  .caption .author { font-weight: 600; margin-right: 6px; }
+  .caption .tag-best { color: #C2410C; font-weight: 600; }
+  .caption .tag-regret { color: var(--ink-soft); font-weight: 600; }
+  .caption .hashtag { color: #00376B; }
+  .view-comments { color: var(--ink-soft); font-size: 14px; margin: 4px 0 6px; cursor: pointer; }
+  .comment { margin-bottom: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .comment .author { font-weight: 600; }
+  .comment .text { flex: 1; min-width: 200px; }
+  .comment .stars { color: #FBBF24; font-size: 12px; letter-spacing: 1px; margin-left: 4px; }
+  .comment .empty { color: var(--line); }
+  .post-time { padding: 8px 14px 12px; font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.5px; }
+  .comment-input { border-top: 1px solid var(--line-soft); padding: 10px 14px; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .comment-input .emoji { font-size: 22px; color: var(--ink); }
+  .comment-input input { flex: 1; border: none; font-size: 14px; font-family: inherit; color: var(--ink); outline: none; background: transparent; }
+  .comment-input input::placeholder { color: var(--ink-mute); }
+  .comment-input .post-btn { color: var(--blue); font-weight: 600; opacity: 0.4; }
+
+  /* STORY VIEWER */
+  .story-viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); z-index: 1000; display: none; align-items: center; justify-content: center; }
+  .story-viewer.open { display: flex; }
+  .story-frame { position: relative; width: 100%; max-width: 420px; height: 100vh; max-height: 750px; background: var(--ink); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .story-progress { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 4px; z-index: 10; }
+  .progress-seg { flex: 1; height: 2.5px; background: rgba(255, 255, 255, 0.35); border-radius: 2px; overflow: hidden; }
+  .progress-seg .fill { height: 100%; background: white; width: 0%; }
+  .progress-seg.done .fill { width: 100%; }
+  .progress-seg.active .fill { animation: progress 6s linear forwards; }
+  @keyframes progress { from { width: 0%; } to { width: 100%; } }
+  .story-header { position: absolute; top: 26px; left: 12px; right: 12px; z-index: 10; display: flex; align-items: center; gap: 10px; color: white; }
+  .story-header .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--story-grad); padding: 2px; }
+  .story-header .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: var(--ink); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; color: white; }
+  .story-header .name { font-weight: 600; font-size: 14px; }
+  .story-header .time { color: rgba(255,255,255,0.7); font-size: 12px; margin-left: 6px; }
+  .story-close { margin-left: auto; color: white; background: none; border: none; font-size: 28px; cursor: pointer; line-height: 1; }
+  .story-content { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 80px 32px 100px; text-align: center; color: white; position: relative; }
+  .story-content .story-bg { position: absolute; inset: 0; z-index: 0; }
+  .story-content > * { position: relative; z-index: 1; }
+  .story-content .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; margin-bottom: 16px; }
+  .story-content h2 { font-size: 32px; font-weight: 600; line-height: 1.15; margin-bottom: 16px; letter-spacing: -0.01em; text-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .story-content .body-text { font-size: 16px; line-height: 1.55; opacity: 0.95; max-width: 320px; text-shadow: 0 1px 8px rgba(0,0,0,0.3); }
+  .story-content .stars-big { font-size: 22px; color: #FBBF24; margin-top: 18px; letter-spacing: 4px; }
+  .story-prev, .story-next { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 5; cursor: pointer; }
+  .story-prev { left: 0; }
+  .story-next { right: 0; }
+  .story-content.media { padding: 0; background: #000; }
+  .story-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* single-line pill */
+  .story-caption {
+    position: absolute;
+    left: 50%; bottom: 18%;
+    transform: translateX(-50%);
+    background: rgba(20,20,20,0.52);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    color: #fff; font-size: 16px; font-weight: 600;
+    letter-spacing: -0.01em; line-height: 1.4;
+    padding: 12px 22px; border-radius: 100px;
+    white-space: nowrap; max-width: 82%;
+    overflow: hidden; text-overflow: ellipsis;
+    z-index: 2; text-align: center;
+  }
+  /* 3-line stacked caption */
+  .story-caption--stack {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border: 1.5px solid rgba(220,220,220,0.35);
+    border-radius: 20px;
+    padding: 24px 36px;
+    white-space: normal; max-width: 92%;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    z-index: 2; text-align: center;
+  }
+  .cap-line { display: block; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.7); }
+  .cap-0 { font-size: 17px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; }
+  .cap-1 { font-size: 10px; font-weight: 300; letter-spacing: 10px; opacity: 0.75; text-transform: uppercase; }
+  .cap-2 { font-size: 40px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
+
+  /* GROWTH POST */
+  .growth-post { background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 24px; padding: 20px; }
+  .growth-post h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .growth-post .subtitle { font-size: 13px; color: var(--ink-soft); margin-bottom: 20px; }
+  .growth-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+  .growth-row:last-child { border-bottom: none; }
+  .growth-who { width: 28px; height: 28px; border-radius: 50%; background: var(--story-grad); padding: 1.5px; flex-shrink: 0; }
+  .growth-who-inner { width: 100%; height: 100%; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+  .growth-text { flex: 1; min-width: 0; }
+  .growth-skill { font-size: 13px; font-weight: 500; line-height: 1.3; }
+  .growth-bar { height: 4px; background: var(--line-soft); border-radius: 100px; margin-top: 6px; overflow: hidden; }
+  .growth-fill { height: 100%; background: var(--story-grad); border-radius: 100px; transform-origin: left; animation: grow 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes grow { from { transform: scaleX(0); } }
+  .growth-nums { font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--ink); }
+  .growth-nums .from { color: var(--ink-mute); font-weight: 400; }
+  .growth-nums .arrow { color: var(--ink-mute); margin: 0 4px; }
+
+  /* CLOSING */
+  .closing-post { background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; padding: 40px 28px; text-align: center; margin-bottom: 24px; }
+  .closing-post h2 { font-size: 28px; font-weight: 300; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .closing-post h2 b { background: var(--story-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; font-style: italic; }
+  .closing-post p { color: var(--ink-soft); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Diariesgram</div>
+    <div class="search">Search</div>
+    <div class="nav-icons">
+      <span>🏠</span><span>💬</span><span>➕</span><span>❤️</span><span>👤</span>
+    </div>
+  </div>
+</nav>
+
+<!-- PROFILE -->
+<header class="profile">
+  <div class="profile-pic-wrap"><div class="profile-pic" style="padding:3px;overflow:hidden;"><img src="profile.jpg" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--bg-card);display:block;"></div></div>
+  <div class="profile-info">
+    <div class="profile-top">
+      <div class="username">malaysia.diaries</div>
+      <button class="follow-btn">Following</button>
+      <button class="message-btn">Message</button>
+    </div>
+    <div class="stats">
+      <span><b>12</b> posts</span>
+      <span><b>248</b> followers</span>
+      <span><b>167</b> following</span>
+    </div>
+    <div class="bio">
+      <div class="bio-name">Wootz &amp; BamBam 🇹🇭</div>
+      <div class="bio-tag">Travel diary · English class pair project</div>
+      <div class="bio-line">📍 Two Thai students exploring Malaysia</div>
+      <div class="bio-line">⭐ Honest reviews · best &amp; worst moments</div>
+      <div class="bio-line">📷 Memories we&apos;re bringing back home</div>
+      <div><a href="#">malaysia-diaries.com</a></div>
+    </div>
+  </div>
+</header>
+
+<!-- STORIES BAR — Day 1–11 -->
+<div class="stories-bar">
+  <div class="story-thumb" onclick="openStory(0)">
+    <div class="story-ring"><div class="story-inner day-1">1</div></div>
+    <div class="story-label">Day 1</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(1)">
+    <div class="story-ring"><div class="story-inner day-2">2</div></div>
+    <div class="story-label">Day 2</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(2)">
+    <div class="story-ring"><div class="story-inner day-3">3</div></div>
+    <div class="story-label">Day 3</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(3)">
+    <div class="story-ring"><div class="story-inner day-4">4</div></div>
+    <div class="story-label">Day 4</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(4)">
+    <div class="story-ring"><div class="story-inner day-5">5</div></div>
+    <div class="story-label">Day 5</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(5)">
+    <div class="story-ring"><div class="story-inner day-6">6</div></div>
+    <div class="story-label">Day 6</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(6)">
+    <div class="story-ring"><div class="story-inner day-7">7</div></div>
+    <div class="story-label">Day 7</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(7)">
+    <div class="story-ring"><div class="story-inner day-8">8</div></div>
+    <div class="story-label">Day 8</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(8)">
+    <div class="story-ring"><div class="story-inner day-9">9</div></div>
+    <div class="story-label">Day 9</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(9)">
+    <div class="story-ring"><div class="story-inner day-10">10</div></div>
+    <div class="story-label">Day 10</div>
+  </div>
+  <div class="story-thumb" onclick="openStory(10)">
+    <div class="story-ring"><div class="story-inner day-11">11</div></div>
+    <div class="story-label">Day 11</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active">▦ POSTS</div>
+  <div class="tab">▷ REELS</div>
+  <div class="tab">🔖 SAVED</div>
+  <div class="tab">📷 TAGGED</div>
+</div>
+
+<!-- FEED -->
+<div class="feed">
+
+  <!-- POST 1 — BATU CAVES -->
+  <article class="post">
+    <div class="post-head">
+      <div class="post-avatar"><div class="post-avatar-inner">M</div></div>
+      <div class="post-meta">
+        <div class="post-username">malaysia.diaries</div>
+        <div class="post-location">Batu Caves, Selangor</div>
+      </div>
+      <div class="post-more">⋯</div>
+    </div>
+    <div class="carousel" data-carousel>
+      <div class="carousel-track">
+        <div class="carousel-slide ph-batu">
+          <div class="photo-placeholder">
+            <div class="icon">⛰️</div>
+            <div class="text">รูป 1: บันได 272 ขั้น</div>
+          </div>
+        </div>
+        <div class="carousel-slide ph-batu-top">
+          <div class="photo-placeholder">
+            <div class="icon">🏛️</div>
+            <div class="text">รูป 2: วัดบนยอดถ้ำ</div>
+          </div>
+        </div>
+        <div class="carousel-slide ph-batu-monkey">
+          <div class="photo-placeholder">
+            <div class="icon">🐒</div>
+            <div class="text">รูป 3: เจ้าลิงขโมยขนม</div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-count">1/3</div>
+      <button class="carousel-arrow prev hidden" onclick="moveCarousel(this, -1)">‹</button>
+      <button class="carousel-arrow next" onclick="moveCarousel(this, 1)">›</button>
+    </div>
+    <div class="carousel-dots">
+      <div class="carousel-dot active"></div>
+      <div class="carousel-dot"></div>
+      <div class="carousel-dot"></div>
+    </div>
+    <div class="post-actions">
+      <div class="left"><span style="color:#ED4956">❤️</span><span>💬</span><span>📤</span></div>
+      <span>🔖</span>
+    </div>
+    <div class="post-likes">Liked by <b>partner_p</b> and <b>247 others</b></div>
+    <div class="post-body">
+      <div class="caption">
+        <span class="author">malaysia.diaries</span>
+        <span class="tag-best">★ BEST EXPERIENCE</span> · 272 colourful steps. Hundreds of monkeys. One unforgettable view from the top. <span class="hashtag">#batucaves #malaysia #thaistudent</span>
+      </div>
+      <div class="view-comments">View all 18 comments</div>
+      <div class="comment">
+        <span class="author">wootz</span>
+        <span class="text">First time I felt like I was really in Malaysia. The colours, the smell of incense, the city looking tiny from up there — I didn&apos;t want to leave. A monkey stole my snack so technically I lost something, but I&apos;d trade it again.</span>
+        <span class="stars">★★★★★</span>
+      </div>
+      <div class="comment">
+        <span class="author">partner_p</span>
+        <span class="text">Climb was harder than I thought. Almost gave up halfway. Standing at the top I realised this trip is already changing me.</span>
+        <span class="stars">★★★★<span class="empty">★</span></span>
+      </div>
+    </div>
+    <div class="post-time">2 weeks ago</div>
+    <div class="comment-input">
+      <span class="emoji">😊</span>
+      <input placeholder="Add a comment...">
+      <span class="post-btn">Post</span>
+    </div>
+  </article>
+
+  <!-- POST 2 — JALAN ALOR -->
+  <article class="post">
+    <div class="post-head">
+      <div class="post-avatar"><div class="post-avatar-inner">M</div></div>
+      <div class="post-meta">
+        <div class="post-username">malaysia.diaries</div>
+        <div class="post-location">Jalan Alor, Kuala Lumpur</div>
+      </div>
+      <div class="post-more">⋯</div>
+    </div>
+    <div class="carousel" data-carousel>
+      <div class="carousel-track">
+        <div class="carousel-slide ph-alor">
+          <div class="photo-placeholder">
+            <div class="icon">🍜</div>
+            <div class="text">รูป 1: บรรยากาศถนน Jalan Alor</div>
+          </div>
+        </div>
+        <div class="carousel-slide ph-alor-food">
+          <div class="photo-placeholder">
+            <div class="icon">🍢</div>
+            <div class="text">รูป 2: อาหารบนโต๊ะ — char kway teow / สะเต๊ะ</div>
+          </div>
+        </div>
+        <div class="carousel-slide ph-alor-night">
+          <div class="photo-placeholder">
+            <div class="icon">🌃</div>
+            <div class="text">รูป 3: เซลฟี่กับเพื่อนตอนค่ำ</div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-count">1/3</div>
+      <button class="carousel-arrow prev hidden" onclick="moveCarousel(this, -1)">‹</button>
+      <button class="carousel-arrow next" onclick="moveCarousel(this, 1)">›</button>
+    </div>
+    <div class="carousel-dots">
+      <div class="carousel-dot active"></div>
+      <div class="carousel-dot"></div>
+      <div class="carousel-dot"></div>
+    </div>
+    <div class="post-actions">
+      <div class="left"><span style="color:#ED4956">❤️</span><span>💬</span><span>📤</span></div>
+      <span>🔖</span>
+    </div>
+    <div class="post-likes">Liked by <b>wootz</b> and <b>193 others</b></div>
+    <div class="post-body">
+      <div class="caption">
+        <span class="author">malaysia.diaries</span>
+        <span class="tag-best">★ BEST EXPERIENCE</span> · An entire street that turns into a kitchen at night. We came for dinner and stayed three hours. <span class="hashtag">#jalanalor #streetfood #kl</span>
+      </div>
+      <div class="view-comments">View all 24 comments</div>
+      <div class="comment">
+        <span class="author">wootz</span>
+        <span class="text">Char kway teow, satay, sugar cane juice — tried things I couldn&apos;t pronounce and loved every one. An aunty taught me to say &quot;sedap&quot;. I said it wrong three times. We laughed. Best night.</span>
+        <span class="stars">★★★★★</span>
+      </div>
+      <div class="comment">
+        <span class="author">partner_p</span>
+        <span class="text">Felt like Yaowarat in Bangkok but completely different. Talking to strangers used to scare me — here it just happens. Came home full and a little braver.</span>
+        <span class="stars">★★★★★</span>
+      </div>
+    </div>
+    <div class="post-time">3 weeks ago</div>
+    <div class="comment-input">
+      <span class="emoji">😊</span>
+      <input placeholder="Add a comment...">
+      <span class="post-btn">Post</span>
+    </div>
+  </article>
+
+  <!-- POST 3 — THE FRIEND WE NEVER MADE (REGRET) -->
+  <article class="post">
+    <div class="post-head">
+      <div class="post-avatar"><div class="post-avatar-inner">M</div></div>
+      <div class="post-meta">
+        <div class="post-username">malaysia.diaries</div>
+        <div class="post-location">University cafeteria</div>
+      </div>
+      <div class="post-more">⋯</div>
+    </div>
+    <div class="post-photo ph-klcc">
+      <div class="photo-placeholder">
+        <div class="icon">🪑</div>
+        <div class="text">An empty seat / cafeteria photo</div>
+      </div>
+    </div>
+    <div class="post-actions">
+      <div class="left"><span>🤍</span><span>💬</span><span>📤</span></div>
+      <span>🔖</span>
+    </div>
+    <div class="post-likes">Liked by <b>partner_p</b> and <b>89 others</b></div>
+    <div class="post-body">
+      <div class="caption">
+        <span class="author">malaysia.diaries</span>
+        <span class="tag-regret">☹ BIGGEST REGRET</span> · A Malaysian student sat with us at lunch every Wednesday for a month. We never asked her name. <span class="hashtag">#regret #lesson</span>
+      </div>
+      <div class="view-comments">View all 31 comments</div>
+      <div class="comment">
+        <span class="author">wootz</span>
+        <span class="text">She was quiet. I was shy. My English was clumsy. I told myself &quot;next time&quot; four weeks in a row. Then the semester ended. The regret of unspoken hellos is heavier than any embarrassment would have been.</span>
+        <span class="stars">★★<span class="empty">★★★</span></span>
+      </div>
+      <div class="comment">
+        <span class="author">partner_p</span>
+        <span class="text">I kept waiting for the &quot;right moment&quot;. Learned the hard way — the right moment is the one in front of you. If I could go back I&apos;d just say hi.</span>
+        <span class="stars">★★<span class="empty">★★★</span></span>
+      </div>
+    </div>
+    <div class="post-time">1 month ago</div>
+    <div class="comment-input">
+      <span class="emoji">😊</span>
+      <input placeholder="Add a comment...">
+      <span class="post-btn">Post</span>
+    </div>
+  </article>
+
+  <!-- POST 4 — DURIAN (REGRET) -->
+  <article class="post">
+    <div class="post-head">
+      <div class="post-avatar"><div class="post-avatar-inner">M</div></div>
+      <div class="post-meta">
+        <div class="post-username">malaysia.diaries</div>
+        <div class="post-location">SS2, Petaling Jaya</div>
+      </div>
+      <div class="post-more">⋯</div>
+    </div>
+    <div class="post-photo ph-durian">
+      <div class="photo-placeholder">
+        <div class="icon">🤢</div>
+        <div class="text">Your durian disaster photo</div>
+      </div>
+    </div>
+    <div class="post-actions">
+      <div class="left"><span>🤍</span><span>💬</span><span>📤</span></div>
+      <span>🔖</span>
+    </div>
+    <div class="post-likes">Liked by <b>wootz</b> and <b>72 others</b></div>
+    <div class="post-body">
+      <div class="caption">
+        <span class="author">malaysia.diaries</span>
+        <span class="tag-regret">☹ REGRET</span> · &quot;Try Musang King,&quot; said a friend. We bought half a kilo. We brought it home in a taxi. The driver was not happy. <span class="hashtag">#durian #neveragain</span>
+      </div>
+      <div class="view-comments">View all 12 comments</div>
+      <div class="comment">
+        <span class="author">wootz</span>
+        <span class="text">I&apos;m Thai — I should love durian. I do not love this durian. 80 ringgit and we finished maybe two pieces. The driver charged extra and told us to &quot;never do this again&quot;. Lesson: respect the smell.</span>
+        <span class="stars">★<span class="empty">★★★★</span></span>
+      </div>
+      <div class="comment">
+        <span class="author">partner_p</span>
+        <span class="text">The durian was fine — the planning failed. We didn&apos;t think about smell, transport, anything. Just &quot;this looks fun on Instagram&quot;. Now we plan.</span>
+        <span class="stars">★★<span class="empty">★★★</span></span>
+      </div>
+    </div>
+    <div class="post-time">1 month ago</div>
+    <div class="comment-input">
+      <span class="emoji">😊</span>
+      <input placeholder="Add a comment...">
+      <span class="post-btn">Post</span>
+    </div>
+  </article>
+
+  <!-- GROWTH POST -->
+  <article class="post growth-post">
+    <h3>📈 How this changed us</h3>
+    <p class="subtitle">Confidence ratings: before vs now (out of 10)</p>
+    <div class="growth-row">
+      <div class="growth-who"><div class="growth-who-inner">W</div></div>
+      <div class="growth-text">
+        <div class="growth-skill">Talking to strangers in English</div>
+        <div class="growth-bar"><div class="growth-fill" style="width: 80%;"></div></div>
+      </div>
+      <div class="growth-nums"><span class="from">4</span><span class="arrow">→</span>8</div>
+    </div>
+    <div class="growth-row">
+      <div class="growth-who"><div class="growth-who-inner">W</div></div>
+      <div class="growth-text">
+        <div class="growth-skill">Asking for help when lost</div>
+        <div class="growth-bar"><div class="growth-fill" style="width: 80%;"></div></div>
+      </div>
+      <div class="growth-nums"><span class="from">2</span><span class="arrow">→</span>8</div>
+    </div>
+    <div class="growth-row">
+      <div class="growth-who"><div class="growth-who-inner" style="color: #DD2A7B;">P</div></div>
+      <div class="growth-text">
+        <div class="growth-skill">Trying unfamiliar food</div>
+        <div class="growth-bar"><div class="growth-fill" style="width: 80%;"></div></div>
+      </div>
+      <div class="growth-nums"><span class="from">4</span><span class="arrow">→</span>8</div>
+    </div>
+    <div class="growth-row">
+      <div class="growth-who"><div class="growth-who-inner" style="color: #DD2A7B;">P</div></div>
+      <div class="growth-text">
+        <div class="growth-skill">Speaking up in groups</div>
+        <div class="growth-bar"><div class="growth-fill" style="width: 70%;"></div></div>
+      </div>
+      <div class="growth-nums"><span class="from">3</span><span class="arrow">→</span>7</div>
+    </div>
+  </article>
+
+  <!-- CLOSING -->
+  <article class="closing-post">
+    <h2>Terima kasih, <b>Malaysia</b> 🇲🇾</h2>
+    <p>Wootz &amp; partner · pair project · 2026</p>
+  </article>
+
+</div>
+
+<!-- STORY VIEWER -->
+<div class="story-viewer" id="storyViewer">
+  <div class="story-frame">
+    <div class="story-progress" id="storyProgress"></div>
+    <div class="story-header">
+      <div class="avatar"><div class="avatar-inner" style="overflow:hidden;background:none;"><img src="profile.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"></div></div>
+      <div class="name">malaysia.diaries</div>
+      <div class="time">2h</div>
+      <button class="story-close" onclick="closeStory()">×</button>
+    </div>
+    <div class="story-content" id="storyContent"></div>
+    <div class="story-prev" onclick="prevStory()"></div>
+    <div class="story-next" onclick="nextStory()"></div>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     CAROUSEL — multi-photo posts (swipe / arrows / dots / 1-of-N counter)
+  ============================================================ */
+  function moveCarousel(btn, dir) {
+    const track = btn.closest('.carousel').querySelector('.carousel-track');
+    track.scrollBy({ left: dir * track.clientWidth, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('[data-carousel]').forEach(carousel => {
+    const track = carousel.querySelector('.carousel-track');
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const total = slides.length;
+    const countEl = carousel.querySelector('.carousel-count');
+    const prevBtn = carousel.querySelector('.carousel-arrow.prev');
+    const nextBtn = carousel.querySelector('.carousel-arrow.next');
+    const dotsContainer = carousel.nextElementSibling && carousel.nextElementSibling.classList.contains('carousel-dots')
+      ? carousel.nextElementSibling : null;
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('.carousel-dot') : [];
+
+    function update() {
+      const i = Math.round(track.scrollLeft / track.clientWidth);
+      if (countEl) countEl.textContent = (i + 1) + '/' + total;
+      dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+      if (prevBtn) prevBtn.classList.toggle('hidden', i === 0);
+      if (nextBtn) nextBtn.classList.toggle('hidden', i === total - 1);
+    }
+    track.addEventListener('scroll', update, { passive: true });
+
+    // Click dot → jump to that slide
+    dots.forEach((dot, idx) => {
+      dot.style.cursor = 'pointer';
+      dot.addEventListener('click', () => {
+        track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' });
+      });
+    });
+
+    update();
+  });
+
+  /* ============================================================
+     STORY VIEWER — Day 1–11 with image / video / text support
+     ─────────────────────────────────────────────────────────────
+     Slide types:
+       { type:'text',  bg:'day-1', label:'DAY 1', title:'...', body:'...', stars:null }
+       { type:'image', src:'stories/Day1/photo.jpg', caption:'...', duration:6 }
+       { type:'video', src:'stories/Day1/clip.mp4',  caption:'...' }
+  ============================================================ */
+  const storySets = [
+    /* ── Day 1 ── */ [
+      { type:'image', src:'stories/Day1/1.0.JPG', caption:['DAY 1', 'IN', 'MALAYSIA'] },
+      { type:'image', src:'stories/Day1/1.1.JPG', caption:'' },
+      { type:'image', src:'stories/Day1/2.JPG',   caption:'' },
+      { type:'image', src:'stories/Day1/3.JPG',   caption:'' },
+      { type:'image', src:'stories/Day1/4.JPG',   caption:'' },
+      { type:'video', src:'stories/Day1/5.MOV',   caption:'' },
+      { type:'image', src:'stories/Day1/6.JPG',   caption:'' },
+      { type:'image', src:'stories/Day1/7.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day1/8.JPG',   caption:'' },
+      { type:'image', src:'stories/Day1/9.JPG',   caption:'' },
+      { type:'image', src:'stories/Day1/10.JPG',  caption:'' },
+      { type:'image', src:'stories/Day1/11.JPG',  caption:'' },
+      { type:'image', src:'stories/Day1/12.JPG',  caption:'' }
+    ],
+    /* ── Day 2 ── */ [
+      { type:'image', src:'stories/Day2/1.JPG',  caption:'' },
+      { type:'image', src:'stories/Day2/2.JPG',  caption:'' },
+      { type:'image', src:'stories/Day2/3.jpeg', caption:'' },
+      { type:'image', src:'stories/Day2/4.JPG',  caption:'' },
+      { type:'image', src:'stories/Day2/5.JPG',  caption:'' },
+      { type:'image', src:'stories/Day2/5.jpeg', caption:'' },
+      { type:'image', src:'stories/Day2/7.JPG',  caption:'' },
+      { type:'video', src:'stories/Day2/8.mp4',  caption:'' },
+      { type:'image', src:'stories/Day2/9.JPG',  caption:'' },
+      { type:'image', src:'stories/Day2/10.JPG', caption:'' },
+      { type:'image', src:'stories/Day2/11.JPG', caption:'' },
+      { type:'image', src:'stories/Day2/12.JPG', caption:'' }
+    ],
+    /* ── Day 3 ── */ [
+      { type:'image', src:'stories/Day3/1.jpeg',   caption:'' },
+      { type:'image', src:'stories/Day3/2.jpeg',   caption:'' },
+      { type:'image', src:'stories/Day3/3.jpeg',   caption:'' },
+      { type:'image', src:'stories/Day3/4.jpeg',   caption:'' },
+      { type:'image', src:'stories/Day3/5.1.jpeg', caption:'' },
+      { type:'video', src:'stories/Day3/5.mp4',    caption:'' },
+      { type:'image', src:'stories/Day3/6.JPG',    caption:'' },
+      { type:'image', src:'stories/Day3/7.jpeg',   caption:'' },
+      { type:'image', src:'stories/Day3/8.JPG',    caption:'' },
+      { type:'image', src:'stories/Day3/9.JPG',    caption:'' },
+      { type:'image', src:'stories/Day3/10.JPG',   caption:'' }
+    ],
+    /* ── Day 4 ── */ [
+      { type:'image', src:'stories/Day4/1.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/2.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/3.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/4.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/5.JPG',   caption:'' },
+      { type:'image', src:'stories/Day4/6.JPG',   caption:'' },
+      { type:'image', src:'stories/Day4/7.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/8.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/9.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day4/10.jpeg', caption:'' },
+      { type:'image', src:'stories/Day4/11.jpeg', caption:'' },
+      { type:'image', src:'stories/Day4/12.JPG',  caption:'' },
+      { type:'image', src:'stories/Day4/13.jpeg', caption:'' }
+    ],
+    /* ── Day 5 ── */ [
+      { type:'image', src:'stories/Day5/1.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/2.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/3.jpeg',  caption:'' },
+      { type:'video', src:'stories/Day5/4.MOV',   caption:'' },
+      { type:'image', src:'stories/Day5/5.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/6.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/7.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/8.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/9.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day5/10.JPG',  caption:'' }
+    ],
+    /* ── Day 6 ── */ [
+      { type:'image', src:'stories/Day6/1.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day6/2.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day6/3.JPG',   caption:'' },
+      { type:'video', src:'stories/Day6/4.MOV',   caption:'' },
+      { type:'video', src:'stories/Day6/5.2.mp4', caption:'' },
+      { type:'image', src:'stories/Day6/5.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day6/6.jpeg',  caption:'' },
+      { type:'image', src:'stories/Day6/7.jpeg',  caption:'' },
+      { type:'video', src:'stories/Day6/8.mp4',   caption:'' }
+    ],
+    /* ── Day 7 ── */ [
+      { type:'image', src:'stories/Day7/1.JPG',    caption:'' },
+      { type:'image', src:'stories/Day7/2.jpg',    caption:'' },
+      { type:'image', src:'stories/Day7/3.jpeg',   caption:'' },
+      { type:'image', src:'stories/Day7/4.JPG',    caption:'' },
+      { type:'image', src:'stories/Day7/5.JPG',    caption:'' },
+      { type:'image', src:'stories/Day7/5.1.jpeg', caption:'' },
+      { type:'image', src:'stories/Day7/5.3.jpeg', caption:'' },
+      { type:'video', src:'stories/Day7/5.4.mp4',  caption:'' },
+      { type:'image', src:'stories/Day7/6.JPG',    caption:'' },
+      { type:'image', src:'stories/Day7/7.JPG',    caption:'' },
+      { type:'image', src:'stories/Day7/8.JPG',    caption:'' },
+      { type:'image', src:'stories/Day7/10.jpeg',  caption:'' }
+    ],
+    /* ── Day 8 ── */  [{ type:'text', bg:'day-8',  label:'DAY 8',  title:'', body:'', stars:null }],
+    /* ── Day 9 ── */  [{ type:'text', bg:'day-9',  label:'DAY 9',  title:'', body:'', stars:null }],
+    /* ── Day 10 ── */ [{ type:'text', bg:'day-10', label:'DAY 10', title:'', body:'', stars:null }],
+    /* ── Day 11 ── */ [{ type:'text', bg:'day-11', label:'DAY 11', title:'', body:'', stars:null }]
+  ];
+
+  let currentSet   = 0;
+  let currentSlide = 0;
+  let storyTimer   = null;
+  let rafId        = null;
+
+  function cancelMedia() {
+    clearTimeout(storyTimer);
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    const oldVideo = document.getElementById('storyVideo');
+    if (oldVideo) { oldVideo.pause(); oldVideo.onended = null; }
+  }
+
+  function openStory(setIndex) {
+    currentSet   = setIndex;
+    currentSlide = 0;
+    document.getElementById('storyViewer').classList.add('open');
+    renderStory();
+  }
+
+  function closeStory() {
+    document.getElementById('storyViewer').classList.remove('open');
+    cancelMedia();
+  }
+
+  function nextStory() {
+    const slides = storySets[currentSet];
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      renderStory();
+    } else if (currentSet < storySets.length - 1) {
+      currentSet++;
+      currentSlide = 0;
+      renderStory();
+    } else {
+      closeStory();
+    }
+  }
+
+  function prevStory() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      renderStory();
+    } else if (currentSet > 0) {
+      currentSet--;
+      currentSlide = storySets[currentSet].length - 1;
+      renderStory();
+    }
+  }
+
+  function buildCaption(caption) {
+    if (!caption) return '';
+    if (Array.isArray(caption)) {
+      const lines = caption.map((line, i) => '<span class="cap-line cap-' + i + '">' + line + '</span>').join('');
+      return '<div class="story-caption--stack">' + lines + '</div>';
+    }
+    return '<div class="story-caption">' + caption + '</div>';
+  }
+
+  function renderStory() {
+    cancelMedia();
+    const slides     = storySets[currentSet];
+    const slide      = slides[currentSlide];
+    const progressEl = document.getElementById('storyProgress');
+    const contentEl  = document.getElementById('storyContent');
+
+    progressEl.innerHTML = slides.map((_, i) => {
+      const cls = i < currentSlide ? 'done' : i === currentSlide ? 'active' : '';
+      return '<div class="progress-seg ' + cls + '"><div class="fill"></div></div>';
+    }).join('');
+
+    if (slide.type === 'image') {
+      contentEl.className = 'story-content media';
+      contentEl.innerHTML =
+        '<img class="story-media" src="' + slide.src + '" alt="">' +
+        buildCaption(slide.caption);
+      storyTimer = setTimeout(nextStory, (slide.duration || 6) * 1000);
+
+    } else if (slide.type === 'video') {
+      contentEl.className = 'story-content media';
+      contentEl.innerHTML =
+        '<video class="story-media" src="' + slide.src + '" autoplay muted playsinline id="storyVideo"></video>' +
+        buildCaption(slide.caption);
+      const video      = document.getElementById('storyVideo');
+      const activeFill = progressEl.querySelector('.progress-seg.active .fill');
+      if (activeFill) { activeFill.style.animation = 'none'; activeFill.style.width = '0%'; }
+      function tickProgress() {
+        if (video.duration) {
+          if (activeFill) activeFill.style.width = (video.currentTime / video.duration * 100) + '%';
+        }
+        if (!video.ended && !video.paused) rafId = requestAnimationFrame(tickProgress);
+      }
+      video.onloadedmetadata = () => { rafId = requestAnimationFrame(tickProgress); };
+      video.onended = nextStory;
+      storyTimer = setTimeout(nextStory, 120000);
+
+    } else {
+      contentEl.className = 'story-content';
+      const starsHtml = slide.stars
+        ? '<div class="stars-big">' + '\u2605'.repeat(slide.stars) + '<span style="opacity:0.3">' + '\u2605'.repeat(5 - slide.stars) + '</span></div>'
+        : '';
+      contentEl.innerHTML =
+        '<div class="story-bg ' + slide.bg + '"></div>' +
+        (slide.label ? '<div class="label">' + slide.label + '</div>' : '') +
+        (slide.title ? '<h2>' + slide.title + '</h2>' : '') +
+        (slide.body  ? '<div class="body-text">' + slide.body + '</div>' : '') +
+        starsHtml;
+      storyTimer = setTimeout(nextStory, 6000);
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeStory();
+    if (document.getElementById('storyViewer').classList.contains('open')) {
+      if (e.key === 'ArrowRight') nextStory();
+      if (e.key === 'ArrowLeft') prevStory();
+    }
+  });
+</script>
+</body>
+</html>
